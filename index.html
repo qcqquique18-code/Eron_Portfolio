@@ -34,51 +34,58 @@ body {
   cursor: none;
 }
 
-/* ===== CURSOR GRAVITACIONAL ===== */
+/* ===== CURSOR ESTRELLA FUGAZ ===== */
 #cursor {
-  width: 12px;
-  height: 12px;
-  background: radial-gradient(circle, var(--electric), var(--neon-cyan));
+  width: 20px;
+  height: 20px;
+  background: radial-gradient(circle, #fff, var(--neon-cyan));
   border-radius: 50%;
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   z-index: 10001;
-  box-shadow: 0 0 25px var(--electric), 0 0 50px var(--neon-cyan);
+  box-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--electric);
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
   transition: transform 0.05s cubic-bezier(0.2, 0.9, 0.4, 1);
+  animation: starRotate 2s linear infinite;
+}
+
+@keyframes starRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 #cursor-trail {
-  width: 100px;
-  height: 100px;
-  border: 2px solid rgba(106, 91, 255, 0.3);
+  width: 80px;
+  height: 80px;
+  background: radial-gradient(circle, rgba(0,229,255,0.3), transparent);
   border-radius: 50%;
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   z-index: 10000;
-  transition: transform 0.15s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  backdrop-filter: blur(4px);
-  background: radial-gradient(circle, rgba(106,91,255,0.05), transparent);
+  transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  filter: blur(8px);
 }
 
-.cursor-particle {
+.star-particle {
   position: fixed;
-  width: 4px;
-  height: 4px;
-  background: var(--neon-cyan);
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, var(--neon-cyan), var(--electric));
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   filter: blur(1px);
-  animation: cursorSpark 0.6s ease-out forwards;
+  animation: starSpark 0.8s ease-out forwards;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 
-@keyframes cursorSpark {
-  0% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0); }
+@keyframes starSpark {
+  0% { opacity: 1; transform: scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: scale(0) rotate(180deg); }
 }
 
 /* ===== CANVAS PRINCIPAL ===== */
@@ -92,27 +99,23 @@ body {
   pointer-events: none;
 }
 
-.wormhole-overlay {
+/* ===== OVNIS NAvegando ===== */
+.ufo {
   position: fixed;
-  top: 0;
-  left: 0;
+  z-index: 200;
+  pointer-events: none;
+  filter: drop-shadow(0 0 15px var(--neon-cyan));
+  animation: ufoGlow 1s infinite alternate;
+}
+
+@keyframes ufoGlow {
+  0% { filter: drop-shadow(0 0 5px var(--neon-cyan)); }
+  100% { filter: drop-shadow(0 0 25px var(--electric)); }
+}
+
+.ufo svg {
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.4) 100%);
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 2s;
-}
-
-.wormhole-active .wormhole-overlay {
-  opacity: 1;
-  animation: wormholePulse 0.5s infinite alternate;
-}
-
-@keyframes wormholePulse {
-  0% { opacity: 0.3; }
-  100% { opacity: 0.8; }
 }
 
 /* ===== NAVBAR ===== */
@@ -172,7 +175,7 @@ nav.scrolled { padding: 14px 48px; background: rgba(5, 5, 15, 0.95); }
   position: relative;
 }
 .nav-links a::before {
-  content: '⚡';
+  content: '✦';
   position: absolute;
   left: -20px;
   opacity: 0;
@@ -398,34 +401,6 @@ section {
   backdrop-filter: blur(10px);
 }
 
-/* ===== FILTROS ===== */
-.filter-bar {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 56px;
-  flex-wrap: wrap;
-}
-.filter-btn {
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  padding: 12px 26px;
-  background: rgba(10, 10, 26, 0.5);
-  border: 1px solid rgba(106, 91, 255, 0.2);
-  color: rgba(217, 217, 217, 0.5);
-  transition: all 0.4s var(--warp);
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-}
-.filter-btn:hover, .filter-btn.active {
-  border-color: var(--electric);
-  color: var(--cold-white);
-  background: rgba(106, 91, 255, 0.25);
-  box-shadow: 0 0 30px rgba(106, 91, 255, 0.2);
-  transform: translateY(-3px);
-}
-
 /* ===== MASONRY GRID ===== */
 .masonry-grid {
   columns: 3;
@@ -489,15 +464,6 @@ section {
 }
 .artwork-card:hover .artwork-glow {
   box-shadow: inset 0 0 80px rgba(106, 91, 255, 0.2);
-}
-
-.empty-state {
-  padding: 100px 40px;
-  text-align: center;
-  color: rgba(217, 217, 217, 0.1);
-  font-family: var(--font-mono);
-  font-size: 0.6rem;
-  border: 1px dashed rgba(106, 91, 255, 0.15);
 }
 
 /* ===== ABOUT ===== */
@@ -698,7 +664,6 @@ footer {
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
 <canvas id="bg-canvas"></canvas>
-<div class="wormhole-overlay"></div>
 
 <div id="lightbox"><button id="lightbox-close">[ CLOSE ]</button><img id="lightbox-img" src="" alt=""><div id="lightbox-cat"></div></div>
 
@@ -720,12 +685,6 @@ footer {
 
 <section id="archive">
   <div class="section-header reveal"><div><span class="section-label">✦ PORTAL 001</span><h2 class="section-title">QUANTUM ARCHIVE</h2></div><div class="section-count" id="artwork-count">0 WORKS</div></div>
-  <div class="filter-bar reveal" id="filter-bar">
-    <button class="filter-btn active" data-cat="all">ALL DIMENSIONS</button>
-    <button class="filter-btn" data-cat="Illustration">ILLUSTRATION</button>
-    <button class="filter-btn" data-cat="Concept">CONCEPT ART</button>
-    <button class="filter-btn" data-cat="Experimental">EXPERIMENTAL</button>
-  </div>
   <div class="masonry-grid reveal" id="masonry-grid"></div>
 </section>
 
@@ -745,21 +704,22 @@ footer {
   <span class="section-label reveal" style="text-align:center;display:block;">✦ PORTAL 003</span>
   <h2 class="contact-headline reveal">INITIATE<br>CONTACT</h2>
   <p class="contact-sub reveal" style="color:rgba(217,217,217,0.4); margin-bottom:52px;">"Transmit your signal across the quantum void."</p>
-  <a href="mailto:qcqquique18@gmail.com" class="contact-email-block reveal"><span class="contact-email-label">✦ DIRECT QUANTUM TRANSMISSION ✦</span><span class="contact-email-addr">qcqquiqu18@gmail.com</span><span class="contact-email-note" style="font-size:0.48rem;">Response within 48 light-hours</span></a>
-  <div class="contact-socials reveal"><a href="#" class="social-link">INSTAGRAM</a><a href="#" class="social-link">ARTSTATION</a><a href="#" class="social-link">BEHANCE</a><a href="mailto:qcqquiqu18@gmail.com" class="social-link">EMAIL</a></div>
+  <a href="mailto:qcqquique18@gmail.com" class="contact-email-block reveal"><span class="contact-email-label">✦ DIRECT QUANTUM TRANSMISSION ✦</span><span class="contact-email-addr">qcqquique18@gmail.com</span><span class="contact-email-note" style="font-size:0.48rem;">Response within 48 light-hours</span></a>
+  <div class="contact-socials reveal"><a href="#" class="social-link">INSTAGRAM</a><a href="#" class="social-link">ARTSTATION</a><a href="#" class="social-link">BEHANCE</a><a href="mailto:qcqquique18@gmail.com" class="social-link">EMAIL</a></div>
 </section>
 
 <footer><div class="footer-logo">✦ ERON LUMBRE ✦</div><div class="footer-signal" style="font-family:var(--font-mono); font-size:0.5rem; color:rgba(217,217,217,0.12);">"Quantum signal received across all dimensions."</div><div class="footer-copy" id="footer-copy"></div></footer>
 
 <script>
-// ===== CANVAS GALAXIA + ESTRELLAS FUGACES =====
+// ===== CANVAS GALAXIA + ESTRELLAS FUGACES + OVNIS =====
 (function(){
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
   let W, H;
   let stars = [];
   let shootingStars = [];
-  let wormhole = { active: false, angle: 0, radius: 0 };
+  let ufos = [];
+  let mouseInfluence = { x: 0, y: 0, active: false };
   
   function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
   
@@ -795,6 +755,60 @@ footer {
     }
   }
   
+  class UFO {
+    constructor() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H;
+      this.vx = (Math.random() - 0.5) * 1.5;
+      this.vy = (Math.random() - 0.5) * 1.5;
+      this.size = 30 + Math.random() * 20;
+      this.angle = 0;
+      this.rotationSpeed = 0.02;
+      this.element = null;
+      this.createElement();
+    }
+    createElement() {
+      this.element = document.createElement('div');
+      this.element.className = 'ufo';
+      this.element.style.width = this.size + 'px';
+      this.element.style.height = this.size + 'px';
+      this.element.innerHTML = `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="40" rx="35" ry="15" fill="rgba(106,91,255,0.8)" stroke="#00e5ff" stroke-width="2"/><ellipse cx="50" cy="45" rx="20" ry="8" fill="rgba(0,229,255,0.6)"/><circle cx="50" cy="50" r="5" fill="#fff"/><rect x="45" y="55" width="10" height="8" fill="rgba(106,91,255,0.6)" rx="2"/></svg>`;
+      document.body.appendChild(this.element);
+    }
+    update() {
+      this.x += this.vx;
+      this.y += this.vy;
+      this.angle += this.rotationSpeed;
+      
+      // Gravedad hacia el mouse
+      if(mouseInfluence.active) {
+        const dx = mouseInfluence.x - this.x;
+        const dy = mouseInfluence.y - this.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 200) {
+          const force = (200 - dist) / 2000;
+          this.vx += dx * force;
+          this.vy += dy * force;
+        }
+      }
+      
+      // Rebote en bordes
+      if(this.x < 0) { this.x = 0; this.vx *= -0.9; }
+      if(this.x > W) { this.x = W; this.vx *= -0.9; }
+      if(this.y < 0) { this.y = 0; this.vy *= -0.9; }
+      if(this.y > H) { this.y = H; this.vy *= -0.9; }
+      
+      // Fricción
+      this.vx *= 0.995;
+      this.vy *= 0.995;
+      
+      this.element.style.left = (this.x - this.size/2) + 'px';
+      this.element.style.top = (this.y - this.size/2) + 'px';
+      this.element.style.transform = `rotate(${this.angle}rad)`;
+    }
+    destroy() { if(this.element) this.element.remove(); }
+  }
+  
   class ShootingStar {
     constructor() {
       this.reset();
@@ -802,16 +816,16 @@ footer {
     }
     reset() {
       this.x = Math.random() * W;
-      this.y = Math.random() * H * 0.3;
-      this.vx = (Math.random() - 0.5) * 8 - 4;
-      this.vy = Math.random() * 6 + 4;
+      this.y = Math.random() * H * 0.2;
+      this.vx = (Math.random() - 0.5) * 12 - 8;
+      this.vy = Math.random() * 8 + 6;
       this.life = 1;
-      this.decay = 0.01 + Math.random() * 0.02;
+      this.decay = 0.008 + Math.random() * 0.015;
       this.trail = [];
     }
     update() {
       this.trail.push({ x: this.x, y: this.y });
-      if(this.trail.length > 8) this.trail.shift();
+      if(this.trail.length > 12) this.trail.shift();
       this.x += this.vx;
       this.y += this.vy;
       this.life -= this.decay;
@@ -824,91 +838,67 @@ footer {
         ctx.beginPath();
         ctx.moveTo(t.x, t.y);
         if(i > 0) ctx.lineTo(this.trail[i-1].x, this.trail[i-1].y);
-        ctx.strokeStyle = `rgba(106, 91, 255, ${(i / this.trail.length) * this.life * 0.8})`;
-        ctx.lineWidth = 3 - (i * 0.3);
+        ctx.strokeStyle = `rgba(0, 229, 255, ${(i / this.trail.length) * this.life * 0.9})`;
+        ctx.lineWidth = 4 - (i * 0.25);
         ctx.stroke();
       }
       ctx.beginPath();
-      ctx.arc(this.x, this.y, 3 * this.life, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0, 229, 255, ${this.life})`;
+      ctx.arc(this.x, this.y, 5 * this.life, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(106, 91, 255, ${this.life})`;
       ctx.fill();
-      ctx.shadowBlur = 15;
+      ctx.shadowBlur = 20;
       ctx.shadowColor = '#6A5BFF';
     }
   }
   
-  function drawWormhole() {
-    if(!wormhole.active) return;
-    wormhole.angle += 0.02;
-    wormhole.radius = Math.min(300, wormhole.radius + 3);
-    for(let i = 0; i < 8; i++) {
-      const angle = wormhole.angle + (i * Math.PI * 2 / 8);
-      const r = wormhole.radius * (0.5 + Math.sin(wormhole.angle * 3 + i) * 0.3);
-      const x = W/2 + Math.cos(angle) * r;
-      const y = H/2 + Math.sin(angle) * r;
-      ctx.beginPath();
-      ctx.arc(x, y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${260 + i * 10}, 100%, 60%, ${0.3 - wormhole.radius/1000})`;
-      ctx.fill();
-    }
-    const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, wormhole.radius);
-    grad.addColorStop(0, 'rgba(106, 91, 255, 0.4)');
-    grad.addColorStop(1, 'transparent');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, W, H);
-    if(wormhole.radius > 500) wormhole.active = false;
-  }
-  
   function drawNebula() {
     const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.6);
-    grad.addColorStop(0, 'rgba(106, 91, 255, 0.05)');
-    grad.addColorStop(0.3, 'rgba(0, 229, 255, 0.02)');
+    grad.addColorStop(0, 'rgba(106, 91, 255, 0.06)');
+    grad.addColorStop(0.3, 'rgba(0, 229, 255, 0.03)');
     grad.addColorStop(1, 'transparent');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
   }
   
-  function initStars() { stars = []; for(let i = 0; i < 600; i++) stars.push(new Star()); }
+  function initStars() { stars = []; for(let i = 0; i < 500; i++) stars.push(new Star()); }
+  function initUFOs() { ufos.forEach(u => u.destroy()); ufos = []; for(let i = 0; i < 5; i++) ufos.push(new UFO()); }
   
   function animate() {
     ctx.clearRect(0, 0, W, H);
     drawNebula();
     stars.forEach(s => s.update());
-    drawWormhole();
-    if(Math.random() < 0.02) shootingStars.push(new ShootingStar());
+    if(Math.random() < 0.03) shootingStars.push(new ShootingStar());
     shootingStars = shootingStars.filter(s => { s.update(); return s.active; });
+    ufos.forEach(u => u.update());
+    ctx.shadowBlur = 0;
     requestAnimationFrame(animate);
   }
   
-  function activateWormhole() {
-    wormhole.active = true;
-    wormhole.radius = 0;
-    wormhole.angle = 0;
-    document.body.classList.add('wormhole-active');
-    setTimeout(() => document.body.classList.remove('wormhole-active'), 3000);
-  }
-  
   document.addEventListener('mousemove', (e) => {
-    if(Math.random() < 0.1) {
+    mouseInfluence.x = e.clientX;
+    mouseInfluence.y = e.clientY;
+    mouseInfluence.active = true;
+    
+    // Partículas estrella fugaz del cursor
+    if(Math.random() < 0.3) {
       const particle = document.createElement('div');
-      particle.className = 'cursor-particle';
-      particle.style.left = e.clientX - 2 + 'px';
-      particle.style.top = e.clientY - 2 + 'px';
+      particle.className = 'star-particle';
+      particle.style.left = e.clientX - 3 + 'px';
+      particle.style.top = e.clientY - 3 + 'px';
       document.body.appendChild(particle);
-      setTimeout(() => particle.remove(), 600);
+      setTimeout(() => particle.remove(), 800);
     }
   });
   
-  window.addEventListener('resize', () => { resize(); initStars(); });
-  resize(); initStars(); animate();
-  window.activateWormhole = activateWormhole;
+  window.addEventListener('resize', () => { resize(); initStars(); initUFOs(); });
+  resize(); initStars(); initUFOs(); animate();
 })();
 
-// ===== CURSOR =====
+// ===== CURSOR ESTRELLA FUGAZ =====
 const cur = document.getElementById('cursor'), trail = document.getElementById('cursor-trail');
 let mx = 0, my = 0, tx = 0, ty = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.transform = `translate(${mx-6}px, ${my-6}px)`; });
-(function loop() { tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12; trail.style.transform = `translate(${tx-50}px, ${ty-50}px)`; requestAnimationFrame(loop); })();
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.transform = `translate(${mx-10}px, ${my-10}px)`; });
+(function loop() { tx += (mx - tx) * 0.15; ty += (my - ty) * 0.15; trail.style.transform = `translate(${tx-40}px, ${ty-40}px)`; requestAnimationFrame(loop); })();
 
 // ===== EFECTOS =====
 window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', scrollY > 60));
@@ -922,98 +912,70 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 const skillObs = new IntersectionObserver(e => e.forEach(e => { if(e.isIntersecting){ e.target.querySelectorAll('.skill-bar').forEach(b => setTimeout(() => b.style.width = b.dataset.w + '%', 200)); skillObs.unobserve(e.target); } }), { threshold: 0.3 });
 document.querySelectorAll('.skills-grid').forEach(el => skillObs.observe(el));
 
-// ===== DETECCIÓN AUTOMÁTICA DE TODAS LAS IMÁGENES =====
-// NO ESCRIBIMOS NINGÚN NOMBRE - EL CÓDIGO LAS DETECTA AUTOMÁTICAMENTE
-// Primero intenta cargar una lista predefinida de formatos comunes en tu carpeta
-// Si falla, usa un sistema dinámico que intenta todas las extensiones posibles
+// ===== TODAS TUS IMÁGENES (SIN REPETIR) =====
+const GALLERY_IMAGES = [
+  "images/IMG_0743.png",
+  "images/IMG_1819.jpg",
+  "images/Rojo.jpeg",
+  "images/barcos.jpg",
+  "images/correr.JPEG",
+  "images/del chill in the galaxy.jpg",
+  "images/dogs.jpeg",
+  "images/fin y jake.jpg",
+  "images/finyjake.jpg",
+  "images/goku fin.jpg",
+  "images/horizonte.jpg",
+  "images/infiernodante.jpg",
+  "images/isaac 2 (1).jpg",
+  "images/islnds final 2 (1).jpg",
+  "images/karonte martco.jpg",
+  "images/nigth city.jpg",
+  "images/ovni.jpg",
+  "images/portector de estrellas_01.jpg",
+  "images/princesa.jpg",
+  "images/protector de estrellas_02.jpg",
+  "images/reversion duende definitivo 2 (1).jpg",
+  "images/room_01.jpg",
+  "images/room_02.jpg",
+  "images/sailor muuuun 2.jpg",
+  "images/sakura fondo yy personaje final.jpg",
+  "images/saturno 2 (1).jpg",
+  "images/visita.jpg"
+];
 
-const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'JPG', 'JPEG', 'PNG', 'GIF', 'WEBP'];
-let galleryImages = [];
-let currentFilter = 'all';
+let works = [];
 
-// Función para cargar todas las imágenes automáticamente
-async function loadAllImages() {
-  // Lista de posibles nombres de imágenes (detecta cualquier archivo de imagen)
-  // Como no sabemos los nombres exactos, usamos un enfoque de "probable existencia"
-  // El navegador intentará cargar y mostrará las que existan
-  
-  const imageList = [
-    // Intenta cargar cualquier imagen que pueda estar en la carpeta
-    // El sistema mostrará las que existan y ocultará las que no
-    "images/IMG_0743.png",
-    "images/IMG_1819.jpg", 
-    "images/fin y jake.jpg",
-    "images/finjyake.jpg",
-    "images/goku fin.jpg",
-    "images/horizonte.jpg",
-    "images/infiernodante.jpg",
-    "images/isaac 2 (1).jpg",
-    "images/islnds final 2 (1).jpg",
-    "images/karonte martco 2.jpg",
-    "images/night city 2.0 (1).jpg",
-    "images/ovni.jpg",
-    "images/portector de estrellas_01.jpg",
-    "images/princesa.jpg",
-    "images/protector de estrellas_02.jpg",
-    "images/rojo.jpg",
-    "images/room_01.jpg",
-    "images/room_02.jpg",
-    "images/room_03.jpg",
-    "images/sailor muuuan 2.jpg",
-    "images/saturno 2 (1).jpg",
-    "images/dogsjpeg",
-    "images/protector de estrellas_02.jpg",
-    "images/reversion duende definitivo 2 (1).jpg",
-    "images/sakura fondo y personaje final.jpg"
-  ];
-  
-  // Probar cada imagen, solo agregar las que existen (validando con fetch)
-  for(const src of imageList) {
-    try {
-      const response = await fetch(src, { method: 'HEAD' });
-      if(response.ok) {
-        // Determinar categoría basada en el nombre
-        let cat = "Illustration";
-        const name = src.toLowerCase();
-        if(name.includes('concept') || name.includes('city') || name.includes('room') || name.includes('horizonte') || name.includes('protector') || name.includes('estrellas')) {
-          cat = "Concept";
-        } else if(name.includes('experimental') || name.includes('ovni') || name.includes('rojo') || name.includes('dante') || name.includes('saturno')) {
-          cat = "Experimental";
-        }
-        galleryImages.push({ src: src, cat: cat, title: src.split('/').pop().replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ') });
-      }
-    } catch(e) { /* imagen no existe, ignorar */ }
+async function loadImages() {
+  for(const src of GALLERY_IMAGES) {
+    works.push({ src: src });
   }
-  
   renderGallery();
 }
 
 function renderGallery() {
   const grid = document.getElementById('masonry-grid');
-  const filtered = currentFilter === 'all' ? galleryImages : galleryImages.filter(w => w.cat === currentFilter);
-  document.getElementById('artwork-count').textContent = `${galleryImages.length} WORKS`;
-  document.getElementById('stat-count').textContent = galleryImages.length;
+  document.getElementById('artwork-count').textContent = `${works.length} WORKS`;
+  document.getElementById('stat-count').textContent = works.length;
   
-  if(!filtered.length) { 
-    grid.innerHTML = `<div class="empty-state">✦ NO SIGNALS IN THIS DIMENSION ✦<br><span style="font-size:0.4rem;">Make sure images are in the "images/" folder</span></div>`; 
+  if(!works.length) { 
+    grid.innerHTML = `<div class="empty-state">✦ NO SIGNALS IN THIS DIMENSION ✦</div>`; 
     return; 
   }
   
-  grid.innerHTML = filtered.map((w, i) => `<div class="artwork-card" onclick="openLightbox(${galleryImages.findIndex(x => x.src === w.src)})">
-    <img class="artwork-img" src="${w.src}" alt="${w.title}" loading="lazy" onerror="this.parentElement.style.opacity='0.5'">
+  grid.innerHTML = works.map((w, idx) => `<div class="artwork-card" onclick="openLightbox(${idx})">
+    <img class="artwork-img" src="${w.src}" alt="" loading="lazy" onerror="this.parentElement.style.opacity='0.5'">
     <div class="artwork-glow"></div>
-    <div class="artwork-overlay"><div class="artwork-cat">✦ ${w.cat.toUpperCase()} ✦</div></div>
+    <div class="artwork-overlay"><div class="artwork-cat">✦ COSMIC VISION ✦</div></div>
   </div>`).join('');
 }
 
 function openLightbox(idx) {
-  const w = galleryImages[idx];
+  const w = works[idx];
   if(!w) return;
   document.getElementById('lightbox-img').src = w.src;
-  document.getElementById('lightbox-cat').innerHTML = `✦ ${w.cat.toUpperCase()} ✦`;
+  document.getElementById('lightbox-cat').innerHTML = `✦ COSMIC VISION ✦`;
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
-  if(typeof window.activateWormhole === 'function') window.activateWormhole();
 }
 
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
@@ -1021,16 +983,7 @@ document.getElementById('lightbox-close').onclick = closeLightbox;
 document.getElementById('lightbox').onclick = e => { if(e.target.id === 'lightbox') closeLightbox(); };
 document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
 
-document.getElementById('filter-bar').addEventListener('click', e => {
-  if(!e.target.classList.contains('filter-btn')) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  e.target.classList.add('active');
-  currentFilter = e.target.dataset.cat;
-  renderGallery();
-});
-
-// Iniciar carga automática
-loadAllImages();
+loadImages();
 </script>
 </body>
 </html>
