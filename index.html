@@ -3,21 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>ERON LUMBRE — COSMIC VISIONS</title>
+<title>ERON LUMBRE — COSMIC PORTAL // VISUAL GOD</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+::selection { background: rgba(106, 91, 255, 0.4); color: var(--cold-white); }
 
 :root {
   --black: #03030a;
-  --deep-space: #0a0a1a;
+  --deep-space: #05050f;
   --platinum: #D9D9D9;
   --cold-white: #F5F8FF;
   --electric: #6A5BFF;
-  --electric-glow: rgba(106, 91, 255, 0.4);
-  --neon-pink: #ff2d75;
+  --electric-glow: rgba(106, 91, 255, 0.6);
   --neon-cyan: #00e5ff;
+  --neon-pink: #ff2d75;
+  --gravity: cubic-bezier(0.34, 1.2, 0.64, 1);
+  --float: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --warp: cubic-bezier(0.2, 0.9, 0.4, 1.1);
   --font-title: 'Syne', sans-serif;
   --font-body: 'DM Sans', sans-serif;
   --font-mono: 'Space Mono', monospace;
@@ -31,53 +35,54 @@ body {
   cursor: none;
 }
 
-/* ===== CURSOR CÓSMICO ===== */
+/* ===== CURSOR GRAVITACIONAL ===== */
 #cursor {
-  width: 8px;
-  height: 8px;
-  background: var(--electric);
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, var(--electric), var(--neon-cyan));
+  border-radius: 50%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 10001;
+  box-shadow: 0 0 25px var(--electric), 0 0 50px var(--neon-cyan);
+  transition: transform 0.05s cubic-bezier(0.2, 0.9, 0.4, 1);
+}
+
+#cursor-trail {
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(106, 91, 255, 0.3);
   border-radius: 50%;
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   z-index: 10000;
-  box-shadow: 0 0 15px var(--electric), 0 0 30px var(--electric);
-  transition: transform 0.08s ease;
+  transition: transform 0.15s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  backdrop-filter: blur(4px);
+  background: radial-gradient(circle, rgba(106,91,255,0.05), transparent);
 }
 
-#cursor-trail {
-  width: 80px;
-  height: 80px;
-  border: 1px solid rgba(106, 91, 255, 0.3);
-  border-radius: 50%;
+.cursor-particle {
   position: fixed;
-  top: 0;
-  left: 0;
+  width: 4px;
+  height: 4px;
+  background: var(--neon-cyan);
+  border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  backdrop-filter: blur(2px);
+  filter: blur(1px);
+  animation: cursorSpark 0.6s ease-out forwards;
 }
 
-#cursor::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: rgba(106, 91, 255, 0.3);
-  animation: pulse 1.5s infinite;
+@keyframes cursorSpark {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0); }
 }
 
-@keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 0.5; }
-  50% { transform: scale(1.8); opacity: 0; }
-}
-
-/* ===== CANVAS 3D + PARTÍCULAS ===== */
+/* ===== CANVAS PRINCIPAL + PARTÍCULAS + WORMHOLE ===== */
 #bg-canvas {
   position: fixed;
   top: 0;
@@ -88,16 +93,28 @@ body {
   pointer-events: none;
 }
 
-/* ===== OVERLAY GRADIENTE ===== */
-.cosmic-overlay {
+/* Wormhole overlay */
+.wormhole-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 50%, transparent 0%, rgba(3, 3, 10, 0.3) 100%);
+  background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.4) 100%);
   pointer-events: none;
   z-index: 1;
+  opacity: 0;
+  transition: opacity 2s;
+}
+
+.wormhole-active .wormhole-overlay {
+  opacity: 1;
+  animation: wormholePulse 0.5s infinite alternate;
+}
+
+@keyframes wormholePulse {
+  0% { opacity: 0.3; }
+  100% { opacity: 0.8; }
 }
 
 /* ===== NAVBAR STELLAR ===== */
@@ -107,78 +124,60 @@ nav {
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: 24px 56px;
+  padding: 20px 48px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   backdrop-filter: blur(20px);
-  background: rgba(3, 3, 10, 0.5);
+  background: rgba(5, 5, 15, 0.5);
   border-bottom: 1px solid rgba(106, 91, 255, 0.15);
-  transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  transition: all 0.5s var(--warp);
 }
-
-nav.scrolled {
-  padding: 16px 56px;
-  background: rgba(3, 3, 10, 0.92);
-  border-bottom-color: rgba(106, 91, 255, 0.3);
-  backdrop-filter: blur(30px);
-}
+nav.scrolled { padding: 14px 48px; background: rgba(5, 5, 15, 0.95); }
 
 .nav-logo {
   font-family: var(--font-title);
   font-weight: 800;
   font-size: 1.2rem;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  background: linear-gradient(135deg, var(--cold-white), var(--electric));
+  background: linear-gradient(135deg, var(--cold-white), var(--electric), var(--neon-cyan));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-decoration: none;
   position: relative;
 }
-
-.nav-logo::before {
-  content: '';
+.nav-logo::after {
+  content: '✦';
   position: absolute;
-  bottom: -5px;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--electric), transparent);
-  transform: scaleX(0);
-  transition: transform 0.4s;
+  right: -25px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--electric);
+  font-size: 1rem;
+  animation: pulse 1.5s infinite;
 }
 
-.nav-logo:hover::before { transform: scaleX(1); }
-
-.nav-links { display: flex; gap: 48px; list-style: none; }
+.nav-links { display: flex; gap: 40px; list-style: none; }
 .nav-links a {
   font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  color: rgba(217, 217, 217, 0.5);
+  color: rgba(217, 217, 217, 0.45);
   text-decoration: none;
-  transition: all 0.3s;
+  transition: all 0.4s;
   position: relative;
 }
-
 .nav-links a::before {
-  content: '✦';
+  content: '⚡';
   position: absolute;
   left: -20px;
   opacity: 0;
-  transition: opacity 0.3s, left 0.3s;
-  color: var(--electric);
-  font-size: 0.6rem;
+  transition: all 0.3s;
 }
-
-.nav-links a:hover::before {
-  opacity: 1;
-  left: -15px;
-}
-
-.nav-links a:hover { color: var(--cold-white); letter-spacing: 0.3em; }
+.nav-links a:hover::before { opacity: 1; left: -15px; }
+.nav-links a:hover { color: var(--cold-white); letter-spacing: 0.35em; }
 
 .nav-cta {
   font-family: var(--font-mono);
@@ -187,19 +186,17 @@ nav.scrolled {
   text-transform: uppercase;
   color: var(--electric);
   border: 1.5px solid var(--electric);
-  padding: 10px 28px;
+  padding: 10px 24px;
   text-decoration: none;
   transition: all 0.4s;
   position: relative;
   overflow: hidden;
-  background: transparent;
 }
-
 .nav-cta:hover {
   background: var(--electric);
   color: var(--black);
-  box-shadow: 0 0 25px var(--electric);
-  border-color: transparent;
+  box-shadow: 0 0 40px var(--electric);
+  transform: scale(1.02);
 }
 
 /* ===== HERO CÓSMICO ===== */
@@ -223,46 +220,49 @@ nav.scrolled {
   color: var(--electric);
   margin-bottom: 32px;
   opacity: 0;
-  animation: fadeUpGlow 0.8s 0.2s forwards;
-  text-shadow: 0 0 10px var(--electric);
+  animation: cosmicFade 0.8s 0.2s forwards;
+  text-shadow: 0 0 15px var(--electric);
+}
+
+@keyframes cosmicFade {
+  from { opacity: 0; transform: translateY(40px) scale(0.9); filter: blur(10px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
 }
 
 .hero-title {
   font-family: var(--font-title);
   font-weight: 800;
-  font-size: clamp(5rem, 14vw, 12rem);
+  font-size: clamp(5rem, 14vw, 11rem);
   line-height: 0.85;
   letter-spacing: -0.03em;
   text-transform: uppercase;
   opacity: 0;
-  animation: fadeUpGlow 1s 0.4s forwards;
+  animation: cosmicFade 1s 0.4s forwards;
 }
-
 .hero-title span {
   display: block;
-  background: linear-gradient(135deg, #fff 0%, var(--platinum) 30%, var(--electric) 70%, var(--neon-cyan) 100%);
+  background: linear-gradient(135deg, #fff, var(--platinum), var(--electric), var(--neon-cyan), var(--neon-pink));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-size: 200% auto;
-  animation: shimmer 4s linear infinite;
+  background-size: 300% auto;
+  animation: hyperspace 3s linear infinite;
 }
-
-@keyframes shimmer {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
+@keyframes hyperspace {
+  0% { background-position: 0% 50%; filter: brightness(1); }
+  50% { background-position: 100% 50%; filter: brightness(1.2); }
+  100% { background-position: 200% 50%; filter: brightness(1); }
 }
 
 .hero-subtitle {
   font-family: var(--font-mono);
-  font-size: clamp(0.65rem, 1.5vw, 0.85rem);
+  font-size: clamp(0.6rem, 1.5vw, 0.85rem);
   letter-spacing: 0.4em;
   text-transform: uppercase;
   color: rgba(217, 217, 217, 0.5);
   margin-top: 32px;
   opacity: 0;
-  animation: fadeUpGlow 0.9s 0.7s forwards;
+  animation: cosmicFade 0.9s 0.6s forwards;
 }
-
 .hero-tagline {
   font-family: var(--font-body);
   font-weight: 300;
@@ -271,14 +271,12 @@ nav.scrolled {
   margin-top: 20px;
   font-style: italic;
   opacity: 0;
-  animation: fadeUpGlow 0.9s 0.9s forwards;
-  letter-spacing: 0.02em;
+  animation: cosmicFade 0.9s 0.8s forwards;
 }
-
 .hero-cta {
   margin-top: 60px;
   opacity: 0;
-  animation: fadeUpGlow 1s 1.1s forwards;
+  animation: cosmicFade 1s 1s forwards;
 }
 
 .btn-primary {
@@ -294,29 +292,21 @@ nav.scrolled {
   position: relative;
   overflow: hidden;
   transition: all 0.5s;
-  border-radius: 2px;
 }
-
 .btn-primary::before {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, var(--electric), var(--neon-cyan));
   transform: translateX(-100%);
-  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.5s var(--gravity);
 }
-
-.btn-primary:hover::before {
-  transform: translateX(0);
-}
-
+.btn-primary:hover::before { transform: translateX(0); }
 .btn-primary:hover {
   color: var(--cold-white);
-  box-shadow: 0 0 40px rgba(106, 91, 255, 0.5);
-  transform: scale(1.02);
+  box-shadow: 0 0 60px var(--electric);
+  transform: scale(1.03);
 }
-
-.btn-primary span { position: relative; z-index: 1; }
 
 .hero-rings {
   position: absolute;
@@ -327,44 +317,32 @@ nav.scrolled {
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
-
 .ring {
   position: absolute;
   border-radius: 50%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  animation: rotateRing linear infinite;
+  animation: rotateRing var(--duration) linear infinite;
 }
-
-.ring:nth-child(1) {
-  width: 250px;
-  height: 250px;
-  animation-duration: 15s;
-  border: 1px solid rgba(106, 91, 255, 0.3);
-  box-shadow: 0 0 20px rgba(106, 91, 255, 0.2);
+.ring:nth-child(1) { --duration: 15s; width: 200px; height: 200px; border: 2px solid rgba(106, 91, 255, 0.4); box-shadow: 0 0 30px var(--electric); }
+.ring:nth-child(2) { --duration: 25s; width: 350px; height: 350px; border: 1px dashed rgba(0, 229, 255, 0.4); animation-direction: reverse; }
+.ring:nth-child(3) { --duration: 35s; width: 550px; height: 550px; border: 1px solid rgba(106, 91, 255, 0.15); }
+.ring:nth-child(4) { --duration: 50s; width: 750px; height: 750px; border: 1px dotted rgba(255, 45, 117, 0.2); }
+.ring::after {
+  content: '✦';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--electric);
+  font-size: 12px;
+  animation: orbitStar 5s linear infinite;
 }
-
-.ring:nth-child(2) {
-  width: 400px;
-  height: 400px;
-  animation-duration: 25s;
-  animation-direction: reverse;
-  border: 1px dashed rgba(0, 229, 255, 0.25);
-}
-
-.ring:nth-child(3) {
-  width: 600px;
-  height: 600px;
-  animation-duration: 35s;
-  border: 1px solid rgba(106, 91, 255, 0.1);
-}
-
-.ring:nth-child(4) {
-  width: 780px;
-  height: 780px;
-  animation-duration: 50s;
-  border: 1px dotted rgba(255, 45, 117, 0.15);
+@keyframes rotateRing { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes orbitStar {
+  0% { transform: translateX(-50%) rotate(0deg); }
+  100% { transform: translateX(-50%) rotate(360deg); }
 }
 
 .hero-scroll {
@@ -377,27 +355,17 @@ nav.scrolled {
   align-items: center;
   gap: 12px;
   opacity: 0;
-  animation: fadeUpGlow 1s 1.4s forwards;
+  animation: cosmicFade 1s 1.2s forwards;
 }
-
-.hero-scroll span {
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.4em;
-  text-transform: uppercase;
-  color: rgba(217, 217, 217, 0.3);
-}
-
 .scroll-line {
-  width: 1px;
+  width: 2px;
   height: 70px;
   background: linear-gradient(to bottom, var(--electric), transparent);
-  animation: scrollPulse 2s infinite;
+  animation: quantumPulse 2s infinite;
 }
-
-@keyframes fadeUpGlow {
-  from { opacity: 0; transform: translateY(35px); filter: blur(8px); }
-  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+@keyframes quantumPulse {
+  0%, 100% { opacity: 0.3; height: 70px; }
+  50% { opacity: 1; height: 90px; }
 }
 
 /* ===== SECTIONS ===== */
@@ -406,7 +374,6 @@ section {
   z-index: 2;
   padding: 140px 56px;
 }
-
 .section-header {
   display: flex;
   align-items: flex-end;
@@ -415,30 +382,23 @@ section {
   border-bottom: 1px solid rgba(106, 91, 255, 0.15);
   padding-bottom: 28px;
 }
-
 .section-label {
   font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.45em;
-  text-transform: uppercase;
   color: var(--electric);
-  display: block;
-  margin-bottom: 12px;
   text-shadow: 0 0 8px var(--electric);
 }
-
 .section-title {
   font-family: var(--font-title);
   font-weight: 800;
-  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-size: clamp(3rem, 7vw, 5rem);
   text-transform: uppercase;
   line-height: 0.9;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--cold-white), var(--platinum));
+  background: linear-gradient(135deg, var(--cold-white), var(--electric));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
 .section-count {
   font-family: var(--font-mono);
   font-size: 0.6rem;
@@ -446,123 +406,101 @@ section {
   color: rgba(217, 217, 217, 0.2);
   background: rgba(106, 91, 255, 0.1);
   padding: 6px 14px;
-  border-radius: 20px;
+  border-radius: 30px;
+  backdrop-filter: blur(10px);
 }
 
-/* ===== FILTER GALAXY ===== */
+/* ===== FILTROS ===== */
 .filter-bar {
   display: flex;
   gap: 8px;
   margin-bottom: 56px;
   flex-wrap: wrap;
 }
-
 .filter-btn {
   font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  padding: 12px 24px;
-  background: rgba(10, 10, 26, 0.6);
-  border: 1px solid rgba(106, 91, 255, 0.15);
+  padding: 12px 26px;
+  background: rgba(10, 10, 26, 0.5);
+  border: 1px solid rgba(106, 91, 255, 0.2);
   color: rgba(217, 217, 217, 0.5);
-  cursor: none;
-  transition: all 0.4s;
+  transition: all 0.4s var(--warp);
+  cursor: pointer;
   backdrop-filter: blur(10px);
 }
-
 .filter-btn:hover, .filter-btn.active {
   border-color: var(--electric);
   color: var(--cold-white);
-  background: rgba(106, 91, 255, 0.2);
-  box-shadow: 0 0 20px rgba(106, 91, 255, 0.2);
-  transform: translateY(-2px);
+  background: rgba(106, 91, 255, 0.25);
+  box-shadow: 0 0 30px rgba(106, 91, 255, 0.2);
+  transform: translateY(-3px);
 }
 
-/* ===== MASONRY GRID ESPECTRAL ===== */
+/* ===== MASONRY CON FÍSICA GRAVITACIONAL ===== */
 .masonry-grid {
   columns: 3;
-  column-gap: 20px;
+  column-gap: 22px;
 }
-
-@media(max-width: 1100px) { .masonry-grid { columns: 2; } }
-@media(max-width: 640px) { .masonry-grid { columns: 1; } }
+@media (max-width: 1100px) { .masonry-grid { columns: 2; } }
+@media (max-width: 640px) { .masonry-grid { columns: 1; } }
 
 .artwork-card {
   break-inside: avoid;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   position: relative;
   overflow: hidden;
-  background: rgba(10, 10, 26, 0.4);
-  cursor: none;
+  background: rgba(10, 10, 26, 0.3);
+  cursor: pointer;
   border: 1px solid rgba(106, 91, 255, 0.1);
-  transition: all 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  backdrop-filter: blur(5px);
+  transition: all 0.6s var(--gravity);
+  backdrop-filter: blur(8px);
 }
-
 .artwork-card:hover {
   border-color: rgba(106, 91, 255, 0.6);
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(106, 91, 255, 0.2);
+  transform: translateY(-12px) scale(1.01);
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 50px rgba(106, 91, 255, 0.3);
 }
-
 .artwork-img {
   width: 100%;
   height: auto;
   display: block;
-  transition: all 0.6s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  filter: brightness(0.75) saturate(0.8) contrast(1.1);
+  transition: all 0.7s var(--warp);
+  filter: brightness(0.7) saturate(0.8) contrast(1.1);
 }
-
 .artwork-card:hover .artwork-img {
-  filter: brightness(1.05) saturate(1.15) contrast(1);
-  transform: scale(1.03);
+  filter: brightness(1.05) saturate(1.15);
+  transform: scale(1.04);
 }
-
 .artwork-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(3, 3, 10, 0.95) 0%, transparent 100%);
-  padding: 28px 20px 20px;
+  background: linear-gradient(to top, rgba(3, 3, 10, 0.98), transparent);
+  padding: 35px 20px 20px;
   opacity: 0;
   transition: opacity 0.4s;
   pointer-events: none;
 }
-
 .artwork-card:hover .artwork-overlay { opacity: 1; }
-
 .artwork-cat {
   font-family: var(--font-mono);
   font-size: 0.55rem;
   letter-spacing: 0.35em;
-  text-transform: uppercase;
   color: var(--electric);
-  text-shadow: 0 0 5px var(--electric);
+  text-shadow: 0 0 8px var(--electric);
 }
-
 .artwork-glow {
   position: absolute;
   inset: 0;
-  box-shadow: inset 0 0 60px rgba(106, 91, 255, 0);
-  transition: box-shadow 0.5s;
+  box-shadow: inset 0 0 80px rgba(106, 91, 255, 0);
+  transition: box-shadow 0.6s;
   pointer-events: none;
 }
-
 .artwork-card:hover .artwork-glow {
-  box-shadow: inset 0 0 60px rgba(106, 91, 255, 0.15);
-}
-
-.empty-state {
-  padding: 120px 40px;
-  text-align: center;
-  color: rgba(217, 217, 217, 0.1);
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.3em;
-  border: 1px dashed rgba(106, 91, 255, 0.2);
-  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 80px rgba(106, 91, 255, 0.2);
 }
 
 /* ===== ABOUT ===== */
@@ -572,7 +510,6 @@ section {
   gap: 100px;
   align-items: center;
 }
-
 .about-text p {
   font-size: 1.1rem;
   line-height: 1.9;
@@ -580,91 +517,40 @@ section {
   margin-bottom: 24px;
   font-weight: 300;
 }
-
 .about-text p strong {
-  color: var(--cold-white);
-  font-weight: 500;
   background: linear-gradient(135deg, var(--cold-white), var(--electric));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-
 .skills-grid {
   margin-top: 56px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
 }
-
 .skill-group h4 {
   font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.3em;
-  text-transform: uppercase;
   color: var(--electric);
   margin-bottom: 20px;
-  text-shadow: 0 0 5px var(--electric);
 }
-
 .skill-item {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-bottom: 14px;
 }
-
-.skill-bar-wrap {
-  flex: 1;
-  height: 2px;
-  background: rgba(106, 91, 255, 0.15);
-  overflow: hidden;
-  border-radius: 2px;
-}
-
-.skill-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--electric), var(--neon-cyan));
-  width: 0;
-  transition: width 1.5s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-  box-shadow: 0 0 10px var(--electric);
-}
-
-.skill-name {
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.1em;
-  color: rgba(217, 217, 217, 0.5);
-  min-width: 100px;
-}
+.skill-bar-wrap { flex: 1; height: 2px; background: rgba(106, 91, 255, 0.15); overflow: hidden; border-radius: 2px; }
+.skill-bar { height: 100%; background: linear-gradient(90deg, var(--electric), var(--neon-cyan)); width: 0; transition: width 1.5s var(--gravity); box-shadow: 0 0 8px var(--electric); }
+.skill-name { font-family: var(--font-mono); font-size: 0.55rem; color: rgba(217, 217, 217, 0.5); min-width: 100px; }
 
 .about-visual { position: relative; }
-.about-img-wrap {
-  aspect-ratio: 3/4;
-  overflow: hidden;
-  border: 1px solid rgba(106, 91, 255, 0.2);
-  background: rgba(10, 10, 26, 0.6);
-  backdrop-filter: blur(10px);
-}
-
-.about-img-frame {
-  position: absolute;
-  inset: -1px;
-  border: 1px solid rgba(106, 91, 255, 0.4);
-  pointer-events: none;
-}
-
-.about-img-frame::before, .about-img-frame::after {
-  content: '';
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  border-color: var(--electric);
-  border-style: solid;
-}
-
+.about-img-wrap { aspect-ratio: 3/4; overflow: hidden; border: 1px solid rgba(106, 91, 255, 0.2); background: rgba(10, 10, 26, 0.5); backdrop-filter: blur(10px); }
+.about-img-frame { position: absolute; inset: -1px; border: 1px solid rgba(106, 91, 255, 0.4); pointer-events: none; }
+.about-img-frame::before, .about-img-frame::after { content: ''; position: absolute; width: 25px; height: 25px; border-color: var(--electric); border-style: solid; }
 .about-img-frame::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
 .about-img-frame::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-
 .about-stats {
   position: absolute;
   bottom: -30px;
@@ -673,9 +559,12 @@ section {
   border: 1px solid rgba(106, 91, 255, 0.3);
   padding: 28px 32px;
   backdrop-filter: blur(30px);
-  box-shadow: 0 0 40px rgba(106, 91, 255, 0.1);
+  animation: float 3s infinite alternate;
 }
-
+@keyframes float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-8px); }
+}
 .stat-num {
   font-family: var(--font-title);
   font-weight: 800;
@@ -683,38 +572,22 @@ section {
   background: linear-gradient(135deg, var(--cold-white), var(--electric));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  line-height: 1;
 }
+.stat-label { font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.3em; color: rgba(217, 217, 217, 0.4); margin-top: 6px; }
 
-.stat-label {
-  font-family: var(--font-mono);
-  font-size: 0.55rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(217, 217, 217, 0.4);
-  margin-top: 6px;
-}
-
-/* ===== CONTACT STELLAR ===== */
-#contact {
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
-
+/* ===== CONTACT ===== */
+#contact { max-width: 900px; margin: 0 auto; text-align: center; }
 .contact-headline {
   font-family: var(--font-title);
   font-weight: 800;
-  font-size: clamp(3.5rem, 9vw, 7.5rem);
+  font-size: clamp(3.5rem, 9vw, 7rem);
   text-transform: uppercase;
   line-height: 0.9;
-  letter-spacing: -0.03em;
   background: linear-gradient(135deg, var(--cold-white), var(--electric), var(--neon-cyan));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 28px;
 }
-
 .contact-email-block {
   display: inline-flex;
   flex-direction: column;
@@ -728,33 +601,20 @@ section {
   text-decoration: none;
   backdrop-filter: blur(20px);
 }
-
 .contact-email-block:hover {
   border-color: var(--electric);
-  box-shadow: 0 0 60px rgba(106, 91, 255, 0.15);
+  box-shadow: 0 0 80px rgba(106, 91, 255, 0.2);
   transform: scale(1.02);
 }
-
 .contact-email-addr {
   font-family: var(--font-title);
   font-weight: 700;
   font-size: clamp(1.2rem, 2.8vw, 1.8rem);
   color: var(--cold-white);
   text-decoration: none;
-  transition: all 0.3s;
 }
-
-.contact-email-addr:hover {
-  text-shadow: 0 0 20px var(--electric);
-}
-
-.contact-socials {
-  display: flex;
-  gap: 48px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
+.contact-email-addr:hover { text-shadow: 0 0 25px var(--electric); }
+.contact-socials { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; }
 .social-link {
   font-family: var(--font-mono);
   font-size: 0.65rem;
@@ -763,35 +623,24 @@ section {
   color: rgba(217, 217, 217, 0.3);
   text-decoration: none;
   transition: all 0.4s;
-  position: relative;
 }
+.social-link:hover { color: var(--electric); letter-spacing: 0.35em; }
 
-.social-link:hover {
-  color: var(--electric);
-  letter-spacing: 0.35em;
-}
-
-/* ===== FOOTER ===== */
 footer {
-  position: relative;
-  z-index: 2;
   padding: 40px 56px;
   border-top: 1px solid rgba(106, 91, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-
 .footer-logo {
   font-family: var(--font-title);
   font-weight: 800;
   font-size: 1rem;
   letter-spacing: 0.25em;
-  text-transform: uppercase;
   color: rgba(217, 217, 217, 0.2);
 }
 
-/* ===== LIGHTBOX ===== */
 #lightbox {
   position: fixed;
   inset: 0;
@@ -802,20 +651,17 @@ footer {
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.4s;
-  backdrop-filter: blur(40px);
+  transition: opacity 0.5s;
+  backdrop-filter: blur(50px);
 }
-
 #lightbox.open { opacity: 1; pointer-events: all; }
-
 #lightbox-img {
   max-width: 88vw;
   max-height: 88vh;
   object-fit: contain;
-  border: 1px solid rgba(106, 91, 255, 0.3);
-  box-shadow: 0 0 100px rgba(106, 91, 255, 0.15);
+  border: 2px solid rgba(106, 91, 255, 0.4);
+  box-shadow: 0 0 150px rgba(106, 91, 255, 0.3);
 }
-
 #lightbox-close {
   position: absolute;
   top: 40px;
@@ -823,29 +669,21 @@ footer {
   font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 0.3em;
-  text-transform: uppercase;
   color: rgba(217, 217, 217, 0.4);
   background: none;
   border: none;
   cursor: pointer;
   transition: all 0.3s;
 }
-
 #lightbox-close:hover { color: var(--electric); letter-spacing: 0.4em; }
 
-/* ===== REVEAL ===== */
 .reveal {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  transform: translateY(50px);
+  transition: opacity 1s var(--gravity), transform 1s var(--gravity);
 }
+.reveal.visible { opacity: 1; transform: translateY(0); }
 
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ===== MOBILE ===== */
 @media (max-width: 900px) {
   nav { padding: 16px 24px; }
   .nav-links { display: none; }
@@ -863,88 +701,82 @@ footer {
 <div id="cursor"></div>
 <div id="cursor-trail"></div>
 <canvas id="bg-canvas"></canvas>
-<div class="cosmic-overlay"></div>
+<div class="wormhole-overlay"></div>
 
-<div id="lightbox">
-  <button id="lightbox-close">[ CLOSE ]</button>
-  <img id="lightbox-img" src="" alt="">
-  <div id="lightbox-cat"></div>
-</div>
+<div id="lightbox"><button id="lightbox-close">[ CLOSE ]</button><img id="lightbox-img" src="" alt=""><div id="lightbox-cat"></div></div>
 
 <nav id="navbar">
   <a href="#hero" class="nav-logo">✦ ERON LUMBRE</a>
-  <ul class="nav-links">
-    <li><a href="#archive">ARCHIVE</a></li>
-    <li><a href="#about">ABOUT</a></li>
-    <li><a href="#contact">CONTACT</a></li>
-  </ul>
+  <ul class="nav-links"><li><a href="#archive">ARCHIVE</a></li><li><a href="#about">ABOUT</a></li><li><a href="#contact">CONTACT</a></li></ul>
   <a href="#contact" class="nav-cta">✦ COLLAB ✦</a>
 </nav>
 
 <section id="hero">
   <div class="hero-rings"><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div></div>
-  <div class="hero-eyebrow">✦ C O S M I C &nbsp; V I S U A L &nbsp; O R G A N I S M ✦</div>
+  <div class="hero-eyebrow">✦ C O S M I C &nbsp; P O R T A L ✦</div>
   <h1 class="hero-title"><span>ERON</span><span>LUMBRE</span></h1>
-  <div class="hero-subtitle">VISUAL ARTIST · DIGITAL SCULPTOR · WORLDBUILDER</div>
-  <p class="hero-tagline">"Constructing impossible organisms between instinct and stellar chaos."</p>
-  <div class="hero-cta"><a href="#archive" class="btn-primary"><span>✦ EXPLORE THE ARCHIVE ✦</span></a></div>
-  <div class="hero-scroll"><span>✦ DESCEND ✦</span><div class="scroll-line"></div></div>
+  <div class="hero-subtitle">VISUAL GOD · DIMENSIONAL SCULPTOR · WORLDBUILDER</div>
+  <p class="hero-tagline">"Bending reality between quantum chaos and stellar precision."</p>
+  <div class="hero-cta"><a href="#archive" class="btn-primary"><span>✦ ENTER THE WORMHOLE ✦</span></a></div>
+  <div class="hero-scroll"><span>✦ DESCEND INTO THE VOID ✦</span><div class="scroll-line"></div></div>
 </section>
 
 <section id="archive">
-  <div class="section-header reveal"><div><span class="section-label">✦ 001</span><h2 class="section-title">CELESTIAL ARCHIVE</h2></div><div class="section-count" id="artwork-count">0 WORKS</div></div>
+  <div class="section-header reveal"><div><span class="section-label">✦ PORTAL 001</span><h2 class="section-title">QUANTUM ARCHIVE</h2></div><div class="section-count" id="artwork-count">0 WORKS</div></div>
   <div class="filter-bar reveal" id="filter-bar">
-    <button class="filter-btn active" data-cat="all">ALL</button>
+    <button class="filter-btn active" data-cat="all">ALL DIMENSIONS</button>
     <button class="filter-btn" data-cat="Illustration">ILLUSTRATION</button>
-    <button class="filter-btn" data-cat="Concept Art">CONCEPT ART</button>
+    <button class="filter-btn" data-cat="Concept">CONCEPT ART</button>
     <button class="filter-btn" data-cat="Experimental">EXPERIMENTAL</button>
   </div>
   <div class="masonry-grid reveal" id="masonry-grid"></div>
 </section>
 
 <section id="about">
-  <div class="section-header reveal"><div><span class="section-label">✦ 002</span><h2 class="section-title">COSMIC IDENTITY</h2></div></div>
+  <div class="section-header reveal"><div><span class="section-label">✦ PORTAL 002</span><h2 class="section-title">COSMIC IDENTITY</h2></div></div>
   <div class="about-grid">
     <div class="about-text reveal">
-      <p><strong>Eron Lumbre</strong> is a visual entity operating between dimensions of digital painting, sculptural experimentation, and immersive worldbuilding.</p>
-      <p>His work reveals hidden geometries through texture, distortion, emergent color and controlled instinct. Blending ancestral artistic intuition with quantum digital precision, he constructs <strong>impossible organisms suspended between discipline and stellar chaos.</strong></p>
-      <p>Available for interdimensional commissions, cosmic collaborations, and creative partnerships with studios, game developers, and collectors seeking genuinely original visual transmissions.</p>
-      <div class="skills-grid">
-        <div class="skill-group"><h4>✦ DIGITAL PAINTING</h4><div class="skill-item"><span class="skill-name">PHOTOSHOP</span><div class="skill-bar-wrap"><div class="skill-bar" data-w="94"></div></div></div><div class="skill-item"><span class="skill-name">PROCREATE</span><div class="skill-bar-wrap"><div class="skill-bar" data-w="90"></div></div></div></div>
-        <div class="skill-group"><h4>✦ 3D SCULPTING</h4><div class="skill-item"><span class="skill-name">BLENDER</span><div class="skill-bar-wrap"><div class="skill-bar" data-w="88"></div></div></div><div class="skill-item"><span class="skill-name">NOMAD SCULPT</span><div class="skill-bar-wrap"><div class="skill-bar" data-w="82"></div></div></div></div>
-      </div>
+      <p><strong>Eron Lumbre</strong> is a quantum visual entity operating between dimensions of digital painting, sculptural experimentation, and immersive worldbuilding.</p>
+      <p>His work reveals hidden geometries through texture, distortion, emergent color and controlled chaos. Blending ancestral intuition with quantum digital precision, he constructs <strong>impossible organisms suspended between discipline and stellar chaos.</strong></p>
+      <div class="skills-grid"><div class="skill-group"><h4>✦ DIGITAL PAINTING</h4><div class="skill-item"><span class="skill-name">PHOTOSHOP</span><div class="skill-bar-wrap"><div class="skill-bar" data-w="94"></div></div></div><div class="skill-item"><span class="skill-name">PROCREATE</span><div class="skill-bar-wrap"><div class="skill-bar" data-w="90"></div></div></div></div><div class="skill-group"><h4>✦ 3D SCULPTING</h4><div class="skill-item"><span class="skill-name">BLENDER</span><div class="skill-bar-wrap"><div class="skill-bar" data-w="88"></div></div></div><div class="skill-item"><span class="skill-name">NOMAD</span><div class="skill-bar-wrap"><div class="skill-bar" data-w="82"></div></div></div></div></div>
     </div>
-    <div class="about-visual reveal"><div class="about-img-wrap"><div class="about-img-frame"></div></div><div class="about-stats"><div class="stat-num" id="stat-count">0</div><div class="stat-label">✦ WORKS IN ARCHIVE ✦</div></div></div>
+    <div class="about-visual reveal"><div class="about-img-wrap"><div class="about-img-frame"></div></div><div class="about-stats"><div class="stat-num" id="stat-count">0</div><div class="stat-label">✦ WORKS IN PORTAL ✦</div></div></div>
   </div>
 </section>
 
 <section id="contact">
-  <span class="section-label reveal" style="text-align:center;display:block;">✦ 003</span>
+  <span class="section-label reveal" style="text-align:center;display:block;">✦ PORTAL 003</span>
   <h2 class="contact-headline reveal">INITIATE<br>CONTACT</h2>
-  <p class="contact-sub reveal">"Transmit your signal across the void."</p>
-  <a href="mailto:qcqquiqu18@gmail.com" class="contact-email-block reveal"><span class="contact-email-label">✦ DIRECT TRANSMISSION ✦</span><span class="contact-email-addr">qcqquiqu18@gmail.com</span><span class="contact-email-note">Response within 48 light-hours</span></a>
+  <p class="contact-sub reveal" style="color:rgba(217,217,217,0.4); margin-bottom:52px;">"Transmit your signal across the quantum void."</p>
+  <a href="mailto:qcqquiqu18@gmail.com" class="contact-email-block reveal"><span class="contact-email-label">✦ DIRECT QUANTUM TRANSMISSION ✦</span><span class="contact-email-addr">qcqquiqu18@gmail.com</span><span class="contact-email-note" style="font-size:0.48rem;">Response within 48 light-hours</span></a>
   <div class="contact-socials reveal"><a href="#" class="social-link">INSTAGRAM</a><a href="#" class="social-link">ARTSTATION</a><a href="#" class="social-link">BEHANCE</a><a href="mailto:qcqquiqu18@gmail.com" class="social-link">EMAIL</a></div>
 </section>
 
-<footer><div class="footer-logo">✦ ERON LUMBRE ✦</div><div class="footer-signal">"Signal received across dimensions."</div><div class="footer-copy" id="footer-copy"></div></footer>
+<footer><div class="footer-logo">✦ ERON LUMBRE ✦</div><div class="footer-signal" style="font-family:var(--font-mono); font-size:0.5rem; color:rgba(217,217,217,0.12);">"Quantum signal received across all dimensions."</div><div class="footer-copy" id="footer-copy"></div></footer>
 
 <script>
-// ===== CANVAS GALAXIA DINÁMICA =====
+// ===== CANVAS: GALAXIA + ESTRELLAS FUGACES + WORMHOLE =====
 (function(){
-  const cv = document.getElementById('bg-canvas'), ctx = cv.getContext('2d');
-  let W, H, stars = [], nebulae = [];
+  const canvas = document.getElementById('bg-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+  let stars = [];
+  let shootingStars = [];
+  let wormhole = { active: false, angle: 0, radius: 0 };
+  let mouseX = W/2, mouseY = H/2;
   
-  function resize() { W = cv.width = innerWidth; H = cv.height = innerHeight; }
+  function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
   
   class Star {
     constructor() { this.reset(); }
     reset() {
       this.x = Math.random() * W;
       this.y = Math.random() * H;
-      this.z = this.pz = Math.random() * W * 1.5;
-      this.r = Math.random() * 1.8 + 0.3;
-      this.speed = Math.random() * 0.35 + 0.08;
+      this.z = this.pz = Math.random() * W * 1.2;
+      this.r = Math.random() * 1.5 + 0.3;
+      this.speed = Math.random() * 0.3 + 0.05;
       this.hue = 240 + Math.random() * 60;
+      this.brightness = 70 + Math.random() * 30;
     }
     update() {
       this.z -= this.speed;
@@ -957,73 +789,167 @@ footer {
         ctx.beginPath();
         ctx.moveTo(px, py);
         ctx.lineTo(sx, sy);
-        const opacity = Math.min(0.9, (W/this.z) / W * 1.2);
-        const brightness = 180 + Math.min(75, (W/this.z) / 8);
-        ctx.strokeStyle = `hsla(${this.hue}, 80%, ${brightness}%, ${opacity})`;
-        ctx.lineWidth = this.r * (W/this.z) * 0.8;
+        const opacity = Math.min(0.9, (W/this.z) / W);
+        const bright = this.brightness + Math.min(50, (W/this.z) / 5);
+        ctx.strokeStyle = `hsla(${this.hue}, 80%, ${bright}%, ${opacity})`;
+        ctx.lineWidth = this.r * (W/this.z) * 0.7;
         ctx.stroke();
       }
       this.pz = this.z;
     }
   }
   
-  function initStars() { stars = []; for(let i = 0; i < 450; i++) stars.push(new Star()); }
+  class ShootingStar {
+    constructor() {
+      this.reset();
+      this.active = true;
+    }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = Math.random() * H * 0.3;
+      this.vx = (Math.random() - 0.5) * 8 - 4;
+      this.vy = Math.random() * 6 + 4;
+      this.life = 1;
+      this.decay = 0.01 + Math.random() * 0.02;
+      this.trail = [];
+    }
+    update() {
+      this.trail.push({ x: this.x, y: this.y });
+      if(this.trail.length > 8) this.trail.shift();
+      this.x += this.vx;
+      this.y += this.vy;
+      this.life -= this.decay;
+      if(this.x < -100 || this.x > W+100 || this.y > H+100 || this.life <= 0) {
+        this.active = false;
+        return;
+      }
+      ctx.beginPath();
+      for(let i = 0; i < this.trail.length; i++) {
+        const t = this.trail[i];
+        const alpha = (i / this.trail.length) * this.life * 0.8;
+        ctx.beginPath();
+        ctx.moveTo(t.x, t.y);
+        if(i > 0) ctx.lineTo(this.trail[i-1].x, this.trail[i-1].y);
+        ctx.strokeStyle = `rgba(106, 91, 255, ${alpha * 0.8})`;
+        ctx.lineWidth = 3 - (i * 0.3);
+        ctx.stroke();
+      }
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, 3 * this.life, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0, 229, 255, ${this.life})`;
+      ctx.fill();
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = '#6A5BFF';
+    }
+  }
+  
+  function drawWormhole() {
+    if(!wormhole.active) return;
+    wormhole.angle += 0.02;
+    wormhole.radius = Math.min(300, wormhole.radius + 3);
+    for(let i = 0; i < 8; i++) {
+      const angle = wormhole.angle + (i * Math.PI * 2 / 8);
+      const r = wormhole.radius * (0.5 + Math.sin(wormhole.angle * 3 + i) * 0.3);
+      const x = W/2 + Math.cos(angle) * r;
+      const y = H/2 + Math.sin(angle) * r;
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${260 + i * 10}, 100%, 60%, ${0.3 - wormhole.radius/1000})`;
+      ctx.fill();
+    }
+    const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, wormhole.radius);
+    grad.addColorStop(0, 'rgba(106, 91, 255, 0.4)');
+    grad.addColorStop(1, 'transparent');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+    if(wormhole.radius > 500) wormhole.active = false;
+  }
   
   function drawNebula() {
     const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*0.6);
-    grad.addColorStop(0, 'rgba(106, 91, 255, 0.04)');
-    grad.addColorStop(0.4, 'rgba(0, 229, 255, 0.02)');
+    grad.addColorStop(0, 'rgba(106, 91, 255, 0.05)');
+    grad.addColorStop(0.3, 'rgba(0, 229, 255, 0.02)');
     grad.addColorStop(1, 'transparent');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, W, H);
   }
   
+  function initStars() { stars = []; for(let i = 0; i < 600; i++) stars.push(new Star()); }
+  
   function animate() {
     ctx.clearRect(0, 0, W, H);
     drawNebula();
     stars.forEach(s => s.update());
+    drawWormhole();
+    if(Math.random() < 0.02) shootingStars.push(new ShootingStar());
+    shootingStars = shootingStars.filter(s => { s.update(); return s.active; });
     requestAnimationFrame(animate);
   }
   
+  function activateWormhole() {
+    wormhole.active = true;
+    wormhole.radius = 0;
+    wormhole.angle = 0;
+    document.body.classList.add('wormhole-active');
+    setTimeout(() => document.body.classList.remove('wormhole-active'), 3000);
+  }
+  
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if(Math.random() < 0.1) {
+      const particle = document.createElement('div');
+      particle.className = 'cursor-particle';
+      particle.style.left = e.clientX - 2 + 'px';
+      particle.style.top = e.clientY - 2 + 'px';
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 600);
+    }
+  });
+  
   window.addEventListener('resize', () => { resize(); initStars(); });
   resize(); initStars(); animate();
+  window.activateWormhole = activateWormhole;
 })();
 
-// ===== CURSOR CÓSMICO =====
+// ===== CURSOR =====
 const cur = document.getElementById('cursor'), trail = document.getElementById('cursor-trail');
 let mx = 0, my = 0, tx = 0, ty = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.transform = `translate(${mx-4}px, ${my-4}px)`; });
-(function loop() { tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12; trail.style.transform = `translate(${tx-40}px, ${ty-40}px)`; requestAnimationFrame(loop); })();
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.transform = `translate(${mx-6}px, ${my-6}px)`; });
+(function loop() { tx += (mx - tx) * 0.12; ty += (my - ty) * 0.12; trail.style.transform = `translate(${tx-50}px, ${ty-50}px)`; requestAnimationFrame(loop); })();
 
-// ===== NAVBAR =====
+// ===== EFECTOS ADICIONALES =====
 window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', scrollY > 60));
-document.getElementById('footer-copy').textContent = `✦ ${new Date().getFullYear()} ERON LUMBRE ✦`;
+document.getElementById('footer-copy').textContent = `✦ ${new Date().getFullYear()} ERON LUMBRE — QUANTUM VISIONS ✦`;
 
 // ===== REVEAL =====
-const observer = new IntersectionObserver(e => e.forEach((e,i)=>{ if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'), i*80); observer.unobserve(e.target); } }), { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+const obs = new IntersectionObserver(e => e.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } }), { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
 // ===== SKILL BARS =====
 const skillObs = new IntersectionObserver(e => e.forEach(e => { if(e.isIntersecting){ e.target.querySelectorAll('.skill-bar').forEach(b => setTimeout(() => b.style.width = b.dataset.w + '%', 200)); skillObs.unobserve(e.target); } }), { threshold: 0.3 });
 document.querySelectorAll('.skills-grid').forEach(el => skillObs.observe(el));
 
-// ===== GALERÍA COMPLETA =====
+// ===== GALERÍA COMPLETA (TUS IMÁGENES) =====
 const GALLERY = [
-  { src: "images/alienigena.JPEG", cat: "Experimental", title: "Alienígena" },
-  { src: "images/barcos.jpg", cat: "Concept Art", title: "Barcos" },
-  { src: "images/correr.JPEG", cat: "Illustration", title: "Correr" },
-  { src: "images/del%20chill%20in%20the%20galaxy.jpg", cat: "Illustration", title: "Chill in the Galaxy" },
-  { src: "images/dogs.JPEG", cat: "Illustration", title: "Dogs" },
-  { src: "images/goku%20fin.jpg", cat: "Illustration", title: "Goku" },
-  { src: "images/horizontepj", cat: "Concept Art", title: "Horizonte" },
-  { src: "images/infernodante.jpg", cat: "Experimental", title: "Inferno Dante" },
+  { src: "images/fin y jake.jpg", cat: "Illustration", title: "Fin y Jake" },
+  { src: "images/goku fin.jpg", cat: "Illustration", title: "Goku" },
+  { src: "images/horizonte.jpg", cat: "Concept", title: "Horizonte" },
+  { src: "images/infiernodante.jpg", cat: "Experimental", title: "Infierno Dante" },
+  { src: "images/isaac 2 (1).jpg", cat: "Illustration", title: "Isaac" },
+  { src: "images/islnds final 2 (1).jpg", cat: "Concept", title: "Islands" },
+  { src: "images/karonte martco 2.jpg", cat: "Experimental", title: "Karonte Martco" },
+  { src: "images/night city 2.0 (1).jpg", cat: "Concept", title: "Night City" },
   { src: "images/ovni.jpg", cat: "Experimental", title: "OVNI" },
-  { src: "images/portector%20de%20estrellas_01.JPG", cat: "Concept Art", title: "Protector de Estrellas I" },
-  { src: "images/protector%20de%20estrellas_02.jpg", cat: "Concept Art", title: "Protector de Estrellas II" },
-  { src: "images/rojo.JPEG", cat: "Experimental", title: "Rojo" },
-  { src: "images/room_01.JPG", cat: "Concept Art", title: "Room I" },
-  { src: "images/room_02.jpg", cat: "Concept Art", title: "Room II" },
-  { src: "images/visita.jpg", cat: "Illustration", title: "Visita" }
+  { src: "images/portector de estrellas_01.jpg", cat: "Concept", title: "Protector de Estrellas I" },
+  { src: "images/princesa.jpg", cat: "Illustration", title: "Princesa" },
+  { src: "images/protector de estrellas_02.jpg", cat: "Concept", title: "Protector de Estrellas II" },
+  { src: "images/rojo.jpg", cat: "Experimental", title: "Rojo" },
+  { src: "images/room_01.jpg", cat: "Concept", title: "Room I" },
+  { src: "images/room_02.jpg", cat: "Concept", title: "Room II" },
+  { src: "images/room_03.jpg", cat: "Concept", title: "Room III" },
+  { src: "images/sailor muuuan 2.jpg", cat: "Illustration", title: "Sailor Muuuan" },
+  { src: "images/saturno 2 (1).jpg", cat: "Experimental", title: "Saturno" }
 ];
 
 let works = [...GALLERY], currentFilter = 'all';
@@ -1035,7 +961,7 @@ function render() {
   document.getElementById('stat-count').textContent = works.length;
   if(!filtered.length) { grid.innerHTML = `<div class="empty-state">✦ NO SIGNALS IN THIS DIMENSION ✦</div>`; return; }
   grid.innerHTML = filtered.map((w, i) => `<div class="artwork-card" onclick="openLightbox(${works.findIndex(x => x.src === w.src)})">
-    <img class="artwork-img" src="${w.src}" alt="${w.title}" loading="lazy" onerror="this.style.opacity='0.2'">
+    <img class="artwork-img" src="${w.src}" alt="${w.title}" loading="lazy" onerror="this.style.opacity='0.3'">
     <div class="artwork-glow"></div>
     <div class="artwork-overlay"><div class="artwork-cat">✦ ${w.cat.toUpperCase()} ✦</div></div>
   </div>`).join('');
@@ -1048,6 +974,7 @@ function openLightbox(idx) {
   document.getElementById('lightbox-cat').innerHTML = `✦ ${w.cat.toUpperCase()} ✦`;
   document.getElementById('lightbox').classList.add('open');
   document.body.style.overflow = 'hidden';
+  if(typeof window.activateWormhole === 'function') window.activateWormhole();
 }
 
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); document.body.style.overflow = ''; }
