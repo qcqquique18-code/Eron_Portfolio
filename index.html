@@ -19,6 +19,9 @@
   --electric-glow: rgba(106, 91, 255, 0.6);
   --neon-cyan: #00e5ff;
   --neon-pink: #ff2d75;
+  --neon-green: #00ff88;
+  --neon-orange: #ff6d00;
+  --neon-purple: #b000ff;
   --gravity: cubic-bezier(0.34, 1.2, 0.64, 1);
   --warp: cubic-bezier(0.2, 0.9, 0.4, 1.1);
   --font-title: 'Syne', sans-serif;
@@ -34,10 +37,10 @@ body {
   cursor: none;
 }
 
-/* ===== CURSOR ESTRELLA FUGAZ ===== */
+/* ===== CURSOR ESTRELLA FUGAZ (CORREGIDO) ===== */
 #cursor {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   background: radial-gradient(circle, #fff, var(--neon-cyan));
   position: fixed;
   top: 0;
@@ -46,8 +49,9 @@ body {
   z-index: 10001;
   box-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--electric);
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-  transition: transform 0.05s cubic-bezier(0.2, 0.9, 0.4, 1);
+  transition: none;
   animation: starRotate 2s linear infinite;
+  will-change: transform;
 }
 
 @keyframes starRotate {
@@ -56,24 +60,24 @@ body {
 }
 
 #cursor-trail {
-  width: 90px;
-  height: 90px;
-  background: radial-gradient(circle, rgba(0,229,255,0.25), transparent);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(0,229,255,0.2), transparent);
   border-radius: 50%;
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   z-index: 10000;
-  transition: transform 0.12s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  transition: transform 0.08s ease-out;
   filter: blur(8px);
+  will-change: transform;
 }
 
 .star-particle {
   position: fixed;
   width: 6px;
   height: 6px;
-  background: radial-gradient(circle, var(--neon-cyan), var(--electric));
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
@@ -98,18 +102,48 @@ body {
   pointer-events: none;
 }
 
-/* ===== OVNIS ===== */
+/* ===== OVNIS DE COLORES ===== */
 .ufo {
   position: fixed;
   z-index: 200;
   pointer-events: none;
-  filter: drop-shadow(0 0 15px var(--neon-cyan));
+  filter: drop-shadow(0 0 15px currentColor);
   animation: ufoGlow 1s infinite alternate;
 }
 
 @keyframes ufoGlow {
-  0% { filter: drop-shadow(0 0 5px var(--neon-cyan)); }
-  100% { filter: drop-shadow(0 0 25px var(--electric)); }
+  0% { filter: drop-shadow(0 0 5px currentColor); }
+  100% { filter: drop-shadow(0 0 25px currentColor); }
+}
+
+/* ===== EFECTO GALAXIA AL CLICK ===== */
+.galaxy-burst {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--electric), var(--neon-cyan), transparent);
+  animation: galaxyExplode 0.8s ease-out forwards;
+}
+
+@keyframes galaxyExplode {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(10); opacity: 0; }
+}
+
+.galaxy-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9997;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  animation: particleFly 1s ease-out forwards;
+}
+
+@keyframes particleFly {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx, 100px), var(--ty, -100px)) scale(0); opacity: 0; }
 }
 
 /* ===== NAVBAR ===== */
@@ -480,7 +514,6 @@ section {
   -webkit-text-fill-color: transparent;
 }
 
-/* SKILLS - NUEVA SECCIÓN AMPLIADA */
 .skills-grid {
   margin-top: 40px;
   display: grid;
@@ -506,7 +539,6 @@ section {
 .skill-bar { height: 100%; background: linear-gradient(90deg, var(--electric), var(--neon-cyan)); width: 0; transition: width 1.5s var(--gravity); box-shadow: 0 0 8px var(--electric); }
 .skill-name { font-family: var(--font-mono); font-size: 0.55rem; color: rgba(217, 217, 217, 0.5); min-width: 115px; }
 
-/* IDIOMAS */
 .languages-section {
   margin-top: 48px;
   padding-top: 32px;
@@ -662,6 +694,11 @@ footer {
   object-fit: contain;
   border: 2px solid rgba(106, 91, 255, 0.4);
   box-shadow: 0 0 150px rgba(106, 91, 255, 0.3);
+  animation: galaxyPulse 0.5s ease-out;
+}
+@keyframes galaxyPulse {
+  0% { transform: scale(0.8); opacity: 0; filter: blur(10px); }
+  100% { transform: scale(1); opacity: 1; filter: blur(0); }
 }
 #lightbox-close {
   position: absolute;
@@ -762,21 +799,11 @@ footer {
         </div>
       </div>
 
-      <!-- SECCIÓN DE IDIOMAS -->
       <div class="languages-section">
         <div class="languages-title">✦ QUANTUM LANGUAGES ✦</div>
-        <div class="language-item">
-          <span class="lang-name">🇪🇸 ESPAÑOL</span>
-          <span class="lang-level lang-native">NATIVO</span>
-        </div>
-        <div class="language-item">
-          <span class="lang-name">🍊 VALENCIANO</span>
-          <span class="lang-level lang-native">NATIVO</span>
-        </div>
-        <div class="language-item">
-          <span class="lang-name">🇬🇧 ENGLISH</span>
-          <span class="lang-level">AVANZADO (C1)</span>
-        </div>
+        <div class="language-item"><span class="lang-name">🇪🇸 ESPAÑOL</span><span class="lang-level lang-native">NATIVO</span></div>
+        <div class="language-item"><span class="lang-name">🍊 VALENCIANO</span><span class="lang-level lang-native">NATIVO</span></div>
+        <div class="language-item"><span class="lang-name">🇬🇧 ENGLISH</span><span class="lang-level">AVANZADO </span></div>
       </div>
     </div>
     <div class="about-visual reveal">
@@ -797,7 +824,7 @@ footer {
 <footer><div class="footer-logo">✦ ERON LUMBRE ✦</div><div class="footer-signal" style="font-family:var(--font-mono); font-size:0.5rem; color:rgba(217,217,217,0.12);">"Quantum signal received across all dimensions."</div><div class="footer-copy" id="footer-copy"></div></footer>
 
 <script>
-// ===== CANVAS GALAXIA + OVNIS =====
+// ===== CANVAS GALAXIA + OVNIS DE COLORES =====
 (function(){
   const canvas = document.getElementById('bg-canvas');
   const ctx = canvas.getContext('2d');
@@ -806,6 +833,16 @@ footer {
   let shootingStars = [];
   let ufos = [];
   let mouseInfluence = { x: 0, y: 0, active: false };
+  
+  // Colores para OVNIS
+  const ufoColors = [
+    '#6A5BFF', // morado eléctrico
+    '#00e5ff', // cyan
+    '#ff2d75', // rosa
+    '#00ff88', // verde
+    '#ff6d00', // naranja
+    '#b000ff'  // púrpura
+  ];
   
   function resize() { W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
   
@@ -842,7 +879,9 @@ footer {
   }
   
   class UFO {
-    constructor() {
+    constructor(color, index) {
+      this.color = color;
+      this.index = index;
       this.x = Math.random() * W;
       this.y = Math.random() * H;
       this.vx = (Math.random() - 0.5) * 1.2;
@@ -857,7 +896,8 @@ footer {
       this.element.className = 'ufo';
       this.element.style.width = this.size + 'px';
       this.element.style.height = this.size + 'px';
-      this.element.innerHTML = `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="40" rx="35" ry="15" fill="rgba(106,91,255,0.8)" stroke="#00e5ff" stroke-width="2"/><ellipse cx="50" cy="45" rx="20" ry="8" fill="rgba(0,229,255,0.6)"/><circle cx="50" cy="50" r="5" fill="#fff"/><rect x="45" y="55" width="10" height="8" fill="rgba(106,91,255,0.6)" rx="2"/></svg>`;
+      this.element.style.color = this.color;
+      this.element.innerHTML = `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="40" rx="35" ry="15" fill="${this.color}" stroke="${this.color}" stroke-width="2" opacity="0.8"/><ellipse cx="50" cy="45" rx="20" ry="8" fill="${this.color}" opacity="0.6"/><circle cx="50" cy="50" r="5" fill="#fff"/><rect x="45" y="55" width="10" height="8" fill="${this.color}" opacity="0.6" rx="2"/></svg>`;
       document.body.appendChild(this.element);
     }
     update() {
@@ -943,7 +983,37 @@ footer {
   }
   
   function initStars() { stars = []; for(let i = 0; i < 500; i++) stars.push(new Star()); }
-  function initUFOs() { ufos.forEach(u => u.destroy()); ufos = []; for(let i = 0; i < 6; i++) ufos.push(new UFO()); }
+  function initUFOs() { ufos.forEach(u => u.destroy()); ufos = []; for(let i = 0; i < ufoColors.length; i++) ufos.push(new UFO(ufoColors[i], i)); }
+  
+  // Función para crear efecto galaxia al hacer clic
+  window.createGalaxyBurst = function(x, y) {
+    // Explosión central
+    const burst = document.createElement('div');
+    burst.className = 'galaxy-burst';
+    burst.style.left = (x - 50) + 'px';
+    burst.style.top = (y - 50) + 'px';
+    burst.style.width = '100px';
+    burst.style.height = '100px';
+    document.body.appendChild(burst);
+    setTimeout(() => burst.remove(), 800);
+    
+    // Partículas que se dispersan
+    for(let i = 0; i < 30; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 100 + Math.random() * 150;
+      const tx = Math.cos(angle) * speed;
+      const ty = Math.sin(angle) * speed;
+      const particle = document.createElement('div');
+      particle.className = 'galaxy-particle';
+      particle.style.left = (x - 2) + 'px';
+      particle.style.top = (y - 2) + 'px';
+      particle.style.background = `radial-gradient(circle, ${ufoColors[Math.floor(Math.random() * ufoColors.length)]}, ${ufoColors[Math.floor(Math.random() * ufoColors.length)]})`;
+      particle.style.setProperty('--tx', tx + 'px');
+      particle.style.setProperty('--ty', ty + 'px');
+      document.body.appendChild(particle);
+      setTimeout(() => particle.remove(), 1000);
+    }
+  };
   
   function animate() {
     ctx.clearRect(0, 0, W, H);
@@ -961,11 +1031,12 @@ footer {
     mouseInfluence.y = e.clientY;
     mouseInfluence.active = true;
     
-    if(Math.random() < 0.3) {
+    if(Math.random() < 0.25) {
       const particle = document.createElement('div');
       particle.className = 'star-particle';
       particle.style.left = e.clientX - 3 + 'px';
       particle.style.top = e.clientY - 3 + 'px';
+      particle.style.background = `radial-gradient(circle, ${ufoColors[Math.floor(Math.random() * ufoColors.length)]}, var(--neon-cyan))`;
       document.body.appendChild(particle);
       setTimeout(() => particle.remove(), 800);
     }
@@ -975,11 +1046,25 @@ footer {
   resize(); initStars(); initUFOs(); animate();
 })();
 
-// ===== CURSOR =====
-const cur = document.getElementById('cursor'), trail = document.getElementById('cursor-trail');
-let mx = 0, my = 0, tx = 0, ty = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.transform = `translate(${mx-11}px, ${my-11}px)`; });
-(function loop() { tx += (mx - tx) * 0.15; ty += (my - ty) * 0.15; trail.style.transform = `translate(${tx-45}px, ${ty-45}px)`; requestAnimationFrame(loop); })();
+// ===== CURSOR (CORREGIDO - SIGUE PERFECTAMENTE) =====
+const cursor = document.getElementById('cursor');
+const trail = document.getElementById('cursor-trail');
+let mouseX = 0, mouseY = 0;
+let trailX = 0, trailY = 0;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  cursor.style.transform = `translate(${mouseX - 12}px, ${mouseY - 12}px)`;
+});
+
+function animateTrail() {
+  trailX += (mouseX - trailX) * 0.2;
+  trailY += (mouseY - trailY) * 0.2;
+  trail.style.transform = `translate(${trailX - 50}px, ${trailY - 50}px)`;
+  requestAnimationFrame(animateTrail);
+}
+animateTrail();
 
 // ===== EFECTOS =====
 window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', scrollY > 60));
@@ -993,7 +1078,7 @@ document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 const skillObs = new IntersectionObserver(e => e.forEach(e => { if(e.isIntersecting){ e.target.querySelectorAll('.skill-bar').forEach(b => setTimeout(() => b.style.width = b.dataset.w + '%', 200)); skillObs.unobserve(e.target); } }), { threshold: 0.3 });
 document.querySelectorAll('.skills-grid').forEach(el => skillObs.observe(el));
 
-// ===== TODAS TUS IMÁGENES =====
+// ===== TODAS TUS IMÁGENES (SIN DUPLICADOS) =====
 const GALLERY_IMAGES = [
   "images/IMG_0743.png",
   "images/IMG_1819.jpg",
@@ -1002,7 +1087,6 @@ const GALLERY_IMAGES = [
   "images/correr.JPEG",
   "images/del chill in the galaxy.jpg",
   "images/dogs.jpeg",
-  "images/fin y jake.jpg",
   "images/finyjake.jpg",
   "images/goku fin.jpg",
   "images/horizonte.jpg",
@@ -1043,16 +1127,22 @@ function renderGallery() {
     return; 
   }
   
-  grid.innerHTML = works.map((w, idx) => `<div class="artwork-card" onclick="openLightbox(${idx})">
+  grid.innerHTML = works.map((w, idx) => `<div class="artwork-card" onclick="openLightbox(${idx}, event)">
     <img class="artwork-img" src="${w.src}" alt="" loading="lazy" onerror="this.parentElement.style.opacity='0.5'">
     <div class="artwork-glow"></div>
     <div class="artwork-overlay"><div class="artwork-cat">✦ COSMIC VISION ✦</div></div>
   </div>`).join('');
 }
 
-function openLightbox(idx) {
+function openLightbox(idx, event) {
   const w = works[idx];
   if(!w) return;
+  
+  // Crear efecto galaxia en la posición del clic
+  const clickX = event ? event.clientX : window.innerWidth/2;
+  const clickY = event ? event.clientY : window.innerHeight/2;
+  if(window.createGalaxyBurst) window.createGalaxyBurst(clickX, clickY);
+  
   document.getElementById('lightbox-img').src = w.src;
   document.getElementById('lightbox-cat').innerHTML = `✦ COSMIC VISION ✦`;
   document.getElementById('lightbox').classList.add('open');
